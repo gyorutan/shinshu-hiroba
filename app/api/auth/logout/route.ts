@@ -6,11 +6,7 @@ export const GET = async () => {
       success: true,
       message: "로그아웃에 성공하였습니다",
     });
-    response.cookies.set("USER_TOKEN", "", {
-      httpOnly: true,
-      expires: new Date(0),
-    });
-
+    response.cookies.delete("USER_TOKEN");
     return response;
   } catch (error) {
     console.log(error);
