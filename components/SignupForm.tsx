@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface PageDataProps {
   screenNumber: number;
@@ -21,6 +21,7 @@ interface FormDataProps {
 }
 
 const SignupForm = () => {
+  const router = useRouter();
   const [pageData, setPageData] = useState<PageDataProps>({
     screenNumber: 1,
     isLoading: false,
@@ -35,6 +36,18 @@ const SignupForm = () => {
     passwordCheck: "",
   });
 
+  const resetFormData = () => {
+    setFormData({
+      ...formData,
+      sei: "",
+      mei: "",
+      username: "",
+      studentId: "",
+      password: "",
+      passwordCheck: "",
+    });
+  };
+
   const handleNextScreen = () => {
     setPageData({ ...pageData, screenNumber: pageData.screenNumber + 1 });
   };
@@ -43,9 +56,48 @@ const SignupForm = () => {
     setPageData({ ...pageData, screenNumber: pageData.screenNumber - 1 });
   };
 
+  const handleSignup = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      setPageData({ ...pageData, isLoading: true });
+
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+      console.log("result", result);
+
+      if (result.success) {
+        toast.success("회원가입에 성공하였습니다", {
+          duration: 3000,
+          position: "top-right",
+        });
+        router.push("/login");
+      } else {
+        toast.error("회원가입에 실패하였습니다", {
+          duration: 3000,
+          position: "top-right",
+        });
+        resetFormData();
+        setPageData({ ...pageData, screenNumber: 1 });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setPageData({ ...pageData, isLoading: false });
+    }
+  };
+
   return (
     <>
-      <form className="p-20 flex flex-col gap-10 w-full">
+      <form
+        className="p-20 flex flex-col gap-10 w-full"
+        onSubmit={handleSignup}
+      >
         <p className="text-2xl font-black text-center">회원가입</p>
         {/* ScreenNumber 1 Sei, Mei */}
         {pageData.screenNumber === 1 ? (
@@ -191,13 +243,13 @@ const SignupForm = () => {
                   type="button"
                   onClick={() => {
                     if (formData.username === "") {
-                      toast.error("ハンドルネームを入力してください！", {
+                      toast.error("닉네임을 입력해주세요 !", {
                         duration: 3000,
                         position: "top-right",
                       });
                       return;
                     } else if (formData.studentId === "") {
-                      toast.error("学籍番号を入力してください！", {
+                      toast.error("학번을 입력해주세요 !", {
                         duration: 3000,
                         position: "top-right",
                       });
@@ -210,6 +262,92 @@ const SignupForm = () => {
                   <span>다음</span>
                   <ArrowRight size={20} />
                 </Button>
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        {/* ScreenNumber 2 username, studentId */}
+        {pageData.screenNumber === 3 ? (
+          <>
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <label
+                    htmlFor="password"
+                    className="absolute left-3 top-2 font-bold text-sm"
+                  >
+                    비밀번호
+                  </label>
+                  <input
+                    value={formData.password}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        password: e.target.value,
+                      });
+                    }}
+                    id="password"
+                    name="password"
+                    required
+                    type="password"
+                    className="tracking-[4px] bg-white w-full pt-9 pb-3 px-3 text-lg font-bold border border-slate-300 hover:border-slate-400 focus:border-emerald-500 outline-none rounded-md shadow-md transition"
+                  />
+                </div>
+                <div className="relative">
+                  <label
+                    htmlFor="passwordCheck"
+                    className="absolute left-3 top-2 font-bold text-sm"
+                  >
+                    비밀번호 확인
+                  </label>
+                  <input
+                    value={formData.passwordCheck}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        passwordCheck: e.target.value,
+                      });
+                    }}
+                    id="passwordCheck"
+                    name="passwordCheck"
+                    required
+                    type="password"
+                    className="tracking-[4px] bg-white w-full pt-9 pb-3 px-3 text-lg font-bold border border-slate-300 hover:border-slate-400 focus:border-emerald-500 outline-none rounded-md shadow-md transition"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={"destructive"}
+                  type="button"
+                  onClick={() => {
+                    handleBeforeScreen();
+                  }}
+                  className="w-full"
+                >
+                  <div className="flex gap-2">
+                    <ArrowLeft size={20} />
+                    <span>수정</span>
+                  </div>
+                </Button>
+                {pageData.isLoading ? (
+                  <Button
+                    disabled
+                    className="w-full flex gap-2 bg-blue-600 hover:bg-blue-600 hover:bg-opacity-90"
+                  >
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>계정 생성중...</span>
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    className="w-full flex gap-2 bg-blue-600 hover:bg-blue-600 hover:bg-opacity-90"
+                  >
+                    <Check size={20} />
+                    <span>가입</span>
+                  </Button>
+                )}
               </div>
             </div>
           </>
