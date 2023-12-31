@@ -1,18 +1,18 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 
-export const GET = async () => {
-  try {
-    const response = NextResponse.json({
-      success: true,
-      message: "로그아웃에 성공하였습니다",
-    });
-    response.cookies.delete("USER_TOKEN");
-    return response;
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      success: false,
-      message: "로그아웃에 실패하였습니다",
-    });
-  }
+export const GET = () => {
+    try {
+        const response = NextResponse.json({
+            success: true,
+            message: "로그아웃하였습니다",
+        });
+
+        response.cookies.set("user_token", "", {
+            httpOnly: true,
+            expires: new Date(0),
+        });
+        return response;
+    } catch (error: any) {
+        return NextResponse.json({success: false, error: error.message});
+    }
 };

@@ -1,6 +1,4 @@
 import LoginForm from "@/components/LoginForm";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 const LoginPage = () => {
   return (

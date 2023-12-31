@@ -1,34 +1,30 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 import prisma from "@/lib/prismadb";
 import bcrypt from "bcrypt";
 
 export const POST = async (request: Request) => {
-  try {
-    const body = await request.json();
+    try {
+        const {sei, mei, username, studentId, password} = await request.json();
 
-    const fullname = body.sei + " " + body.mei;
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    const email = body.studentId + "@shinshu-u.ac.jp";
+        const createdUser = await prisma.user.create({
+            data: {
+                sei,
+                mei,
+                fullname: `${sei}` + ' ' + `${mei}`,
+                username,
+                studentId,
+                email: `${studentId}` + '@shinshu-u.ac.jp',
+                password: hashedPassword
+            }
+        })
 
-    const { username, studentId, password } = body;
+        console.log(createdUser);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const createdUser = await prisma.user.create({
-      data: {
-        fullname,
-        username,
-        studentId,
-        email,
-        password: hashedPassword,
-      },
-    });
-
-    console.log(createdUser);
-
-    return NextResponse.json({ success: true, message: "성공", createdUser });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json({ success: false, message: "서버 에러" });
-  }
-};
+        return NextResponse.json({success: true, message: '회원가입에 성공하였습니다', createdUser});
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({success: false, message: "알 수 없는 오류"});
+    }
+}
