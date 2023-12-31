@@ -34,10 +34,6 @@ const Navbar = () => {
 
     console.log(user);
 
-    if (!user) {
-      return;
-    }
-
     setUsername(user.username);
   };
 
@@ -49,7 +45,7 @@ const Navbar = () => {
 
   useEffect(() => {
     getUser();
-  }, [username]);
+  }, []);
 
   return (
     <>
