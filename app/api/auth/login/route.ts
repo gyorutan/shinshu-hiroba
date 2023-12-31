@@ -47,11 +47,7 @@ export const POST = async (request: NextRequest) => {
       httpOnly: true,
     });
 
-    return NextResponse.json({
-      success: true,
-      message: "로그인에 성공하였습니다",
-      response,
-    });
+    return response;
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, message: "알 수 없는 오류" });

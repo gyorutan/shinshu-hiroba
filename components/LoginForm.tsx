@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDebounce } from "@/hooks/useDebounce";
-import { api } from "@/helper/api";
 import axios from "axios";
 // import { useLoginCheck } from "@/helper/useLoginCheck";
 
@@ -111,7 +110,7 @@ const LoginForm = () => {
     }
     try {
       setIsLoading(true);
-      const response = await axios.post('api/auth/login', loginData);
+      const response = await axios.post('/api/auth/login', loginData);
       const result = await response.data;
       if (result.success) {
         // localStorage.setItem("user_token", result.accessToken);
