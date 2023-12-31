@@ -14,16 +14,19 @@ export const POST = async (request: NextRequest) => {
     });
 
     if (!user) {
-      return { success: false, message: "등록되지 않은 학번입니다" };
+      return NextResponse.json({
+        success: false,
+        message: "등록되지 않은 이메일입니다",
+      });
     }
 
     const comparePassword = await bcrypt.compare(password, user.password!);
 
     if (!comparePassword) {
-      return {
+      return NextResponse.json({
         success: false,
         message: "비밀번호가 일치하지 않습니다",
-      };
+      });
     }
 
     const payload = {
