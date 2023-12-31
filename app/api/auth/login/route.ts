@@ -13,6 +13,8 @@ export const POST = async (request: NextRequest) => {
       },
     });
 
+    console.log(user);
+
     if (!user) {
       return NextResponse.json({
         success: false,
@@ -37,14 +39,20 @@ export const POST = async (request: NextRequest) => {
       email: user.email,
     };
 
+    console.log(payload);
+
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY!, {
       expiresIn: "1h",
     });
+
+    console.log(token);
 
     const response = NextResponse.json({
       success: true,
       message: "로그인에 성공하였습니다",
     });
+
+    console.log(response);
 
     response.cookies.set("user_token", token, {
       httpOnly: true,

@@ -102,16 +102,14 @@ const LoginForm = () => {
       isChecking.studentId !== "available-studentId" ||
       isChecking.password !== "available-password"
     ) {
-      toast.error("입력한 정보가 올바르지 않습니다", {
-        duration: 3000,
-        position: "top-right",
-      });
+      toast.error("입력한 정보가 올바르지 않습니다");
       return;
     }
     try {
       setIsLoading(true);
-      const response = await axios.post('/api/auth/login', loginData);
+      const response = await axios.post("/api/auth/login", loginData);
       const result = await response.data;
+      console.log(result);
       if (result.success) {
         router.push("/post");
         toast.success(result.message);
