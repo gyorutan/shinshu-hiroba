@@ -16,7 +16,7 @@ export const POST = async (request: NextRequest) => {
     if (!user) {
       return NextResponse.json({
         success: false,
-        message: "등록되지 않은 이메일입니다",
+        message: "등록되지 않은 학번입니다",
       });
     }
 

@@ -113,7 +113,6 @@ const LoginForm = () => {
       const response = await axios.post('/api/auth/login', loginData);
       const result = await response.data;
       if (result.success) {
-        // localStorage.setItem("user_token", result.accessToken);
         router.push("/post");
         toast.success(result.message);
       } else {
